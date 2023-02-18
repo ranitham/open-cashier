@@ -1,6 +1,8 @@
 {
   "short_name": "HDY Cashier",
   "name": "HDY Cashier",
+  "theme_color": "#b4d7bc",
+  "background_color": "#ffffff",
   "icons": [
     {
       "src": "images/cash-machine-512.png",
