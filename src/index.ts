@@ -71,6 +71,26 @@ async function connectToPort(): Promise<void> {
 }
 
 /**
+ * Writes 'Hello' to the currently active connection.
+ */
+async function writeToPort(): Promise<void> {
+  if (port) {
+    const writer = port.writable?.getWriter();
+    if (writer) {
+      const data = new Uint8Array([104, 101, 108, 108, 111]); // hello
+      await writer.write(data);
+
+      // Allow the serial port to be closed later.
+      writer.releaseLock();
+    } else {
+      console.error("Could not write to serial port");
+    }
+  } else {
+    console.error("No Serial port open");
+  }
+}
+
+/**
  * Closes the currently active connection.
  */
 async function disconnectFromPort(): Promise<void> {
@@ -92,6 +112,7 @@ async function connectEventListeners() {
   openCashDrawer = document.getElementById("openDrawer") as HTMLButtonElement;
   openCashDrawer.addEventListener("click", () => {
     connectToPort();
+    writeToPort();
     disconnectFromPort();
   });
 }
