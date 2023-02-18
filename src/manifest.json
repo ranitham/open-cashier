@@ -1,25 +1,31 @@
 {
-  "short_name": "Serial Terminal",
-  "name": "Serial Terminal",
+  "short_name": "HDY Cashier",
+  "name": "HDY Cashier",
   "icons": [
     {
-      "src": "images/icons-1024.png",
-      "type": "image/png",
-      "sizes": "1024x1024",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "images/icons-192.png",
-      "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "images/icons-512.png",
+      "src": "images/cash-machine-512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any maskable"
-    }
+    },
+    {
+      "src": "images/cash-machine-256.png",
+      "type": "image/png",
+      "sizes": "256x256",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/cash-machine-128.png",
+      "type": "image/png",
+      "sizes": "128x128",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/cash-machine-64.png",
+      "type": "image/png",
+      "sizes": "64x64",
+      "purpose": "any maskable"
+    },
   ],
   "start_url": "./?source=pwa",
   "display": "standalone",
