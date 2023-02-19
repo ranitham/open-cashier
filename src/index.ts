@@ -29,6 +29,19 @@ let port: SerialPort | undefined;
  * user is prompted for one.
  */
 async function getSelectedPort(): Promise<void> {
+  if (!(await getDesiredPort())) {
+    try {
+      port = await navigator.serial.requestPort({});
+    } catch (e) {
+      if (e instanceof DOMException) {
+        console.error(e.message);
+      }
+      return;
+    }
+  }
+}
+
+async function getDesiredPort(): Promise<boolean> {
   const availablePorts = await navigator.serial.getPorts();
 
   if (availablePorts.length > 0) {
@@ -37,22 +50,21 @@ async function getSelectedPort(): Promise<void> {
       console.log(portInfo);
       port = portCandidate;
     }
-  } else {
-    try {
-      port = await navigator.serial.requestPort({});
-    } catch (e) {
-      return;
-    }
+    return true;
   }
+
+  return false;
 }
 
 /**
  * Initiates a connection to the selected port.
  */
-async function connectToPort(): Promise<void> {
-  await getSelectedPort();
+async function connectToPort(): Promise<boolean> {
   if (!port) {
-    return;
+    await getSelectedPort();
+    if (!port) {
+      return false;
+    }
   }
 
   const options = {
@@ -66,8 +78,10 @@ async function connectToPort(): Promise<void> {
     if (e instanceof Error) {
       console.log(`<ERROR: ${e.message}>`);
     }
-    return;
+    return false;
   }
+
+  return true;
 }
 
 /**
@@ -108,20 +122,47 @@ async function disconnectFromPort(): Promise<void> {
   }
 }
 
-async function connectEventListeners() {
+function disableCashDrawerButton(button: HTMLButtonElement) {
+  button.disabled = true;
+  button.classList.replace("cursor-pointer", "cursor-not-allowed");
+  button.textContent = "Opening Cash Drawer...";
+}
+
+function enableCashDrawerButton(button: HTMLButtonElement) {
+  button.disabled = false;
+  button.classList.replace("cursor-not-allowed", "cursor-pointer");
+  button.textContent = "Open Cash Drawer";
+}
+
+async function connectEventListenersAndTryOpen() {
   openCashDrawer = document.getElementById("openDrawer") as HTMLButtonElement;
-  openCashDrawer.addEventListener("click", () => {
-    connectToPort();
-    writeToPort();
-    disconnectFromPort();
+  openCashDrawer.addEventListener("click", async () => {
+    disableCashDrawerButton(openCashDrawer);
+    if (await connectToPort()) {
+      await writeToPort();
+      await disconnectFromPort();
+    }
+    setTimeout(enableCashDrawerButton, 200, openCashDrawer);
   });
+
+  if (await getDesiredPort()) {
+    disableCashDrawerButton(openCashDrawer);
+    if (await connectToPort()) {
+      await writeToPort();
+      await disconnectFromPort();
+      setTimeout(enableCashDrawerButton, 200, openCashDrawer);
+    }
+  }
 }
 
 if (
   document.readyState === "interactive" ||
   document.readyState === "complete"
 ) {
-  connectEventListeners();
+  connectEventListenersAndTryOpen();
 } else {
-  document.addEventListener("DOMContentLoaded", connectEventListeners);
+  document.addEventListener(
+    "DOMContentLoaded",
+    connectEventListenersAndTryOpen
+  );
 }
