@@ -1,11 +1,7 @@
-# Serial Terminal
+# HDY Cashier
 
-This repository contains a Progressive Web App that allows the user to
-communicate with a locally connected serial device through an interactive
-terminal. This provides a demonstration of the [Serial
-API](https://wicg.github.io/serial/).
-
-This API is available starting with Chrome 89, Edge 89, and Opera 76.
+This repository contains a Progressive Web App that sends a command over
+a USB serial adapter
 
 ## Privacy
 
@@ -34,3 +30,6 @@ To start a local development server run,
 ```sh
 npm run dev
 ```
+
+## Original Code
+Code was originally from GoogleChromeLabs/serial-terminal
